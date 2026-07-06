@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 
 // Constantes globales
 const FECHA_INICIO = new Date("2025-03-17");
+const FECHA_FIN_PRIMER_PERIODO = new Date("2026-02-20");
+const FECHA_INICIO_SEGUNDO_PERIODO = new Date("2026-06-29");
 const VALOR_DESCANSO = 400;
 const VALOR_DIA = 200;
 const VALOR_VACACIONES = 600;
@@ -18,6 +20,7 @@ const INITIAL_DIAS_DESCANSO = [
 
 const INITIAL_DIAS_VACACIONES = [
   // Vacaciones (comentadas por defecto en el original)
+ "No hubo vacaciones"
 ];
 
 const INITIAL_ABONOS = [
@@ -236,11 +239,17 @@ function App() {
   };
 
   // --- Cálculos Matemáticos ---
-  const diasTranscurridos = (() => {
-    const hoy = new Date();
-    const diferencia = hoy - FECHA_INICIO;
+  const calcularDiasEntreFechas = (fechaInicio, fechaFin) => {
+    const diferencia = fechaFin - fechaInicio;
     return Math.floor(diferencia / (1000 * 60 * 60 * 24));
-  })();
+  };
+
+  const hoy = new Date();
+  const diasPrimerPeriodo = calcularDiasEntreFechas(FECHA_INICIO, FECHA_FIN_PRIMER_PERIODO);
+  const diasSegundoPeriodo = hoy >= FECHA_INICIO_SEGUNDO_PERIODO 
+    ? calcularDiasEntreFechas(FECHA_INICIO_SEGUNDO_PERIODO, hoy) 
+    : 0;
+  const diasTranscurridos = diasPrimerPeriodo + diasSegundoPeriodo;
 
   const totalDescansos = diasDescanso.length;
   const valorDescansos = totalDescansos * VALOR_DESCANSO;
@@ -353,7 +362,7 @@ function App() {
         <div className="bg-white rounded-2xl shadow-sm p-5 text-center transition-all duration-300">
           <div className="text-3xl font-bold dias-transcurridos pulse-gentle">{diasTranscurridos}</div>
           <div className="text-gray-600 font-medium mt-1">Días Transcurridos</div>
-          <div className="text-xs text-gray-500 mt-1.5">Desde el 17 mar 2025</div>
+          <div className="text-xs text-gray-500 mt-1.5">Primer período + Segundo período</div>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm p-5 text-center transition-all duration-300">
@@ -396,8 +405,28 @@ function App() {
               <span className="font-semibold text-emerald-600">17 de marzo, 2025</span>
             </div>
             <div className="flex justify-between items-center text-sm md:text-base">
+              <span className="text-gray-600">Primer período final:</span>
+              <span className="font-semibold text-emerald-600">20 de febrero, 2026</span>
+            </div>
+            <div className="flex justify-between items-center text-sm md:text-base">
+              <span className="text-gray-600">Segundo período inicio:</span>
+              <span className="font-semibold text-emerald-600">29 de junio, 2026</span>
+            </div>
+            <div className="flex justify-between items-center text-sm md:text-base">
               <span className="text-gray-600">Fecha Actual:</span>
               <span className="font-semibold text-blue-600">{formatHumanDate(new Date())}</span>
+            </div>
+            <div className="flex justify-between items-center text-sm md:text-base">
+              <span className="text-gray-600">Días primer período:</span>
+              <span className="font-bold text-slate-800 bg-gray-100 px-3 py-1 rounded-full">{diasPrimerPeriodo} días</span>
+            </div>
+            <div className="flex justify-between items-center text-sm md:text-base">
+              <span className="text-gray-600">Días segundo período:</span>
+              <span className="font-bold text-slate-800 bg-gray-100 px-3 py-1 rounded-full">{diasSegundoPeriodo} días</span>
+            </div>
+            <div className="flex justify-between items-center text-sm md:text-base">
+              <span className="text-gray-600">Total días:</span>
+              <span className="font-bold text-slate-800 bg-gray-100 px-3 py-1 rounded-full">{diasTranscurridos} días</span>
             </div>
             <div className="flex justify-between items-center text-sm md:text-base">
               <span className="text-gray-600">Días Trabajados (Neto):</span>
@@ -593,7 +622,7 @@ function App() {
             <span>{vacacionesVisibles ? 'Ocultar' : 'Mostrar'}</span>
           </button>
         </div>
-        
+
         {vacacionesVisibles && (
           <div>
             <p className="text-xs text-gray-500 mb-4 bg-gray-50 dark:bg-slate-700/50 p-2.5 rounded-lg border border-gray-150 dark:border-slate-600">
