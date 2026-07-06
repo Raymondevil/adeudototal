@@ -1,0 +1,611 @@
+import { useState, useEffect } from 'react'
+
+// Constantes globales
+const FECHA_INICIO = new Date("2025-03-17");
+const VALOR_DESCANSO = 400;
+const VALOR_DIA = 200;
+const VALOR_VACACIONES = 600;
+
+const MESES = [
+  "enero", "febrero", "marzo", "abril", "mayo", "junio",
+  "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+];
+
+// Datos iniciales en caso de no existir en localStorage
+const INITIAL_DIAS_DESCANSO = [
+  "20-marzo-2025", "21-marzo-2025", "23-marzo-2025", "24-marzo-2025", "25-marzo-2025", "06-abril-2025", "13-abril-2025", "21-abril-2025", "22-abril-2025", "23-abril-2025", "27-abril-2025", "01-mayo-2025", "14-mayo-2025", "23-mayo-2025", "01-junio-2025", "08-junio-2025", "15-junio-2025", "22-junio-2025", "29-junio-2025", "05-julio-2025", "13-julio-2025", "19-julio-2025", "27-julio-2025", "03-agosto-2025", "10-agosto-2025", "16-agosto-2025", "17-agosto-2025", "18-agosto-2025", "24-agosto-2025", "07-septiembre-2025", "14-septiembre-2025", "21-septiembre-2025", "28-septiembre-2025", "05-octubre-2025", "12-octubre-2025", "17-octubre-2025", "27-octubre-2025", "07-noviembre-2025", "23-noviembre-2025", "26-noviembre-2025", "07-diciembre-2025", "14-diciembre-2025", "21-diciembre-2025", "23-diciembre-2025", "24-diciembre-2025", "25-diciembre-2025", "26-diciembre-2025", "27-diciembre-2025", "29-diciembre-2025", "30-diciembre-2025", "01-enero-2026", "02-enero-2026", "03-enero-2026", "04-enero-2026", "05-enero-2026", "06-enero-2026", "07-enero-2026", "08-febrero-2026", "15-febrero-2026", "05-julio-2026"
+];
+
+const INITIAL_DIAS_VACACIONES = [
+  // Vacaciones (comentadas por defecto en el original)
+];
+
+const INITIAL_ABONOS = [
+  {fecha: "11-mayo-2025", monto: 3700, nota: "fue el dia que le pase la cuenta de la deuda"},
+  {fecha: "16-junio-2025", monto: 3600, nota: "fue el dia de la pitahaya casa abajo"},
+  {fecha: "30-junio-2025", monto: 3600, nota: "fue el dia que me pidio agua"},
+  {fecha: "10-agosto-2025", monto: 3600, nota: "dia que me los dio en las pizzas del parque"},
+  {fecha: "30-agosto-2025", monto: 1800, nota: "fue el dia que tome ballenas"},
+  {fecha: "03-septiembre-2025", monto: 3000, nota: "Para el pago de la escuela me los dio en la casa de abajo"},
+  {fecha: "02-octubre-2025", monto: 3000, nota: "pagar la escuela jueves madrugada"},
+  {fecha: "08-octubre-2025", monto: 800, nota: "dia que el gordo prendio la moto de mencha"},
+  {fecha: "10-octubre-2025", monto: 1000, nota: "Dia de botes y puli faros al lagañoso"},
+  {fecha: "13-octubre-2025", monto: 1000, nota: "Cuando no vinieron a trabajar"},
+  {fecha: "15-octubre-2025", monto: 900, nota: "fue cuando le pase corriente al carro"},
+  {fecha: "18-octubre-2025", monto: 900, nota: "sábado no funcionaba mi celular"},
+  {fecha: "22-octubre-2025", monto: 900, nota: "arme compu de piti"},
+  {fecha: "23-octubre-2025", monto: 900, nota: "mencha andaba amanecido"},
+  {fecha: "03-noviembre-2025", monto: 3000, nota: "pagar escuela"},
+  {fecha: "03-enero-2026", monto: 3000, nota: "Domingo casa arriba"},
+  {fecha: "16-febrero-2026", monto: 3000, nota: "Dia que trabajo el pollo"},
+  {fecha: "24-febrero-2026", monto: 3000, nota: "recuperacion"},
+  {fecha: "02-marzo-2026", monto: 3000, nota: "llego con la lap casa abajo"},
+  {fecha: "26-marzo-2026", monto: 3000, nota: "pagar colegiatura dormi en la casa de abajo"},
+  {fecha: "04-abril-2026", monto: 1500, nota: "visita doctor"},
+  {fecha: "14-abril-2026", monto: 600, nota: "terapia"},
+  {fecha: "18-abril-2026", monto: 600, nota: "terapia"},
+  {fecha: "21-abril-2026", monto: 600, nota: "terapia"},
+  {fecha: "28-abril-2026", monto: 2000, nota: "para mensualidad escuela"},
+  {fecha: "29-abril-2026", monto: 1000, nota: "faltaban de un dia antes"},
+  {fecha: "21-mayo-2026", monto: 1000, nota: "cuando no fue chuky"},
+  {fecha: "01-junio-2026", monto: 3000, nota: "Fiesta plaza los fresnos"},
+  {fecha: "15-junio-2026", monto: 1000, nota: "dia que estaba enfermo"},
+  {fecha: "21-junio-2026", monto: 1000, nota: "dia del padre"},
+  {fecha: "24-junio-2026", monto: 1000, nota: "Dia que jugo la seleccion"},
+  {fecha: "03-julio-2026", monto: 3000, nota: "dia que me cambie de casa de abajo para arriba"}
+];
+
+// Helper functions para el formateo y conversión de fechas
+function stringToDate(fechaStr) {
+  const partes = fechaStr.split("-");
+  const mesIndex = MESES.indexOf(partes[1].toLowerCase());
+  const dia = parseInt(partes[0], 10);
+  const año = parseInt(partes[2], 10);
+  return new Date(año, mesIndex, dia);
+}
+
+function dateToString(date) {
+  const dia = date.getDate().toString().padStart(2, "0");
+  const mes = MESES[date.getMonth()];
+  const año = date.getFullYear();
+  return `${dia}-${mes}-${año}`;
+}
+
+function formatHumanDate(date) {
+  const dia = date.getDate();
+  const mes = MESES[date.getMonth()];
+  const año = date.getFullYear();
+  return `${dia} de ${mes}, ${año}`;
+}
+
+function crearFechaDesdeInput(fechaStr) {
+  const [year, month, day] = fechaStr.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function formatearMoneda(cantidad) {
+  return new Intl.NumberFormat("es-MX", {
+    style: "currency",
+    currency: "MXN",
+    minimumFractionDigits: 0,
+  }).format(cantidad);
+}
+
+function App() {
+  // --- Estados de Datos ---
+  const [diasDescanso, setDiasDescanso] = useState(() => {
+    const saved = localStorage.getItem('diasDescanso');
+    return saved ? JSON.parse(saved) : INITIAL_DIAS_DESCANSO;
+  });
+
+  const [diasVacaciones, setDiasVacaciones] = useState(() => {
+    const saved = localStorage.getItem('diasVacaciones');
+    return saved ? JSON.parse(saved) : INITIAL_DIAS_VACACIONES;
+  });
+
+  const [abonos, setAbonos] = useState(() => {
+    const saved = localStorage.getItem('abonos');
+    return saved ? JSON.parse(saved) : INITIAL_ABONOS;
+  });
+
+  const [vacacionesVisibles, setVacacionesVisibles] = useState(() => {
+    const saved = localStorage.getItem('vacacionesVisibles');
+    return saved ? JSON.parse(saved) === 'true' : false;
+  });
+
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('theme') || 'light';
+  });
+
+  // --- Estados de Inputs ---
+  const [nuevaFechaDescanso, setNuevaFechaDescanso] = useState('');
+  const [nuevaFechaAbono, setNuevaFechaAbono] = useState('');
+  const [nuevoMontoAbono, setNuevoMontoAbono] = useState('');
+  const [nuevaNotaAbono, setNuevaNotaAbono] = useState('');
+
+  // --- Estado de Notificaciones (Toasts) ---
+  const [toasts, setToasts] = useState([]);
+
+  // --- Efectos para Persistencia ---
+  useEffect(() => {
+    localStorage.setItem('diasDescanso', JSON.stringify(diasDescanso));
+  }, [diasDescanso]);
+
+  useEffect(() => {
+    localStorage.setItem('diasVacaciones', JSON.stringify(diasVacaciones));
+  }, [diasVacaciones]);
+
+  useEffect(() => {
+    localStorage.setItem('abonos', JSON.stringify(abonos));
+  }, [abonos]);
+
+  useEffect(() => {
+    localStorage.setItem('vacacionesVisibles', vacacionesVisibles.toString());
+  }, [vacacionesVisibles]);
+
+  useEffect(() => {
+    localStorage.setItem('theme', theme);
+    // Cambiar la clase en el body para aplicar los estilos CSS
+    document.body.className = '';
+    if (theme !== 'light') {
+      document.body.classList.add(`theme-${theme}`);
+    }
+  }, [theme]);
+
+  // --- Sistema de Notificaciones ---
+  const showNotification = (mensaje, tipo = 'info') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, mensaje, tipo }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 4000);
+  };
+
+  // --- Operaciones ---
+  const handleAgregarDescanso = () => {
+    if (!nuevaFechaDescanso) {
+      showNotification("Por favor selecciona una fecha", "warning");
+      return;
+    }
+
+    const fechaObj = crearFechaDesdeInput(nuevaFechaDescanso);
+    const fechaFormateada = dateToString(fechaObj);
+
+    if (diasDescanso.includes(fechaFormateada)) {
+      showNotification("Esta fecha ya está en la lista de descansos", "warning");
+      return;
+    }
+
+    const nuevosDescansos = [...diasDescanso, fechaFormateada].sort((a, b) => stringToDate(a) - stringToDate(b));
+    setDiasDescanso(nuevosDescansos);
+    setNuevaFechaDescanso('');
+    showNotification(`Día de descanso agregado: ${formatHumanDate(fechaObj)}`, "success");
+  };
+
+  const handleEliminarDescanso = (fechaFormateada) => {
+    const confirmacion = window.confirm(`¿Seguro que deseas eliminar el descanso del ${fechaFormateada}?`);
+    if (!confirmacion) return;
+
+    setDiasDescanso(prev => prev.filter(d => d !== fechaFormateada));
+    showNotification(`Descanso eliminado: ${fechaFormateada}`, "danger");
+  };
+
+  const handleAgregarAbono = () => {
+    if (!nuevaFechaAbono || !nuevoMontoAbono) {
+      showNotification("Por favor selecciona una fecha y escribe un monto", "warning");
+      return;
+    }
+
+    const monto = parseFloat(nuevoMontoAbono);
+    if (isNaN(monto) || monto <= 0) {
+      showNotification("El monto debe ser un número positivo", "warning");
+      return;
+    }
+
+    const fechaObj = crearFechaDesdeInput(nuevaFechaAbono);
+    const fechaFormateada = dateToString(fechaObj);
+
+    const nuevoAbono = {
+      fecha: fechaFormateada,
+      monto,
+      nota: nuevaNotaAbono.trim()
+    };
+
+    const nuevosAbonos = [...abonos, nuevoAbono].sort((a, b) => stringToDate(a.fecha) - stringToDate(b.fecha));
+    setAbonos(nuevosAbonos);
+    setNuevaFechaAbono('');
+    setNuevoMontoAbono('');
+    setNuevaNotaAbono('');
+    showNotification(`Abono de ${formatearMoneda(monto)} agregado con éxito`, "success");
+  };
+
+  const handleEliminarAbono = (index, abono) => {
+    const confirmacion = window.confirm(`¿Seguro que deseas eliminar el abono del ${abono.fecha} por ${formatearMoneda(abono.monto)}?`);
+    if (!confirmacion) return;
+
+    setAbonos(prev => prev.filter((_, i) => i !== index));
+    showNotification(`Abono de ${formatearMoneda(abono.monto)} eliminado`, "danger");
+  };
+
+  // --- Cálculos Matemáticos ---
+  const diasTranscurridos = (() => {
+    const hoy = new Date();
+    const diferencia = hoy - FECHA_INICIO;
+    return Math.floor(diferencia / (1000 * 60 * 60 * 24));
+  })();
+
+  const totalDescansos = diasDescanso.length;
+  const valorDescansos = totalDescansos * VALOR_DESCANSO;
+
+  const totalVacaciones = diasVacaciones.length;
+  const valorVacaciones = totalVacaciones * VALOR_VACACIONES;
+
+  const sumaAbonos = abonos.reduce((suma, abono) => suma + abono.monto, 0);
+  const ingresosPorDias = diasTranscurridos * VALOR_DIA;
+
+  const diasTrabajados = Math.max(0, diasTranscurridos - totalDescansos);
+
+  const totalGeneral = valorDescansos + (vacacionesVisibles ? valorVacaciones : 0) + ingresosPorDias - sumaAbonos;
+
+  return (
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none">
+        {toasts.map(toast => (
+          <div
+            key={toast.id}
+            className={`p-4 rounded-lg shadow-lg flex items-center gap-2 text-white pointer-events-auto transform transition-all duration-300 animate-bounce-short ${
+              toast.tipo === 'success' ? 'bg-emerald-500' :
+              toast.tipo === 'warning' ? 'bg-amber-500 text-slate-900' :
+              toast.tipo === 'danger' ? 'bg-rose-500' : 'bg-blue-500'
+            }`}
+          >
+            <i className={`fas ${
+              toast.tipo === 'success' ? 'fa-check-circle' :
+              toast.tipo === 'warning' ? 'fa-exclamation-triangle' :
+              toast.tipo === 'danger' ? 'fa-trash-alt' : 'fa-info-circle'
+            }`}></i>
+            <span className="font-medium text-sm">{toast.mensaje}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Header */}
+      <header className="flex flex-col md:flex-row md:justify-between md:items-center gap-6 mb-8 bg-white/40 backdrop-blur-md rounded-2xl p-6 border border-gray-200/50 shadow-sm">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
+            <i className="fas fa-calendar-alt text-blue-600"></i>
+            Control de Trabajo y Finanzas
+          </h1>
+          <p className="text-gray-600 mt-1">Seguimiento interactivo de días trabajados, descansos y abonos</p>
+        </div>
+
+        {/* Theme Pill Switcher */}
+        <div className="bg-gray-200/80 dark:bg-slate-700/80 p-1.5 rounded-full flex gap-1 items-center self-start md:self-center shadow-inner">
+          <button
+            onClick={() => setTheme('light')}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+              theme === 'light' ? 'bg-white text-blue-600 shadow-md scale-105' : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <i className="fas fa-sun mr-1"></i> Claro
+          </button>
+          <button
+            onClick={() => setTheme('dark')}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+              theme === 'dark' ? 'bg-slate-900 text-blue-400 shadow-md scale-105' : 'text-gray-400 hover:text-slate-200'
+            }`}
+          >
+            <i className="fas fa-moon mr-1"></i> Oscuro
+          </button>
+          <button
+            onClick={() => setTheme('green')}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+              theme === 'green' ? 'bg-emerald-600 text-white shadow-md scale-105' : 'text-emerald-700 hover:text-emerald-950'
+            }`}
+          >
+            <i className="fas fa-leaf mr-1"></i> Verde
+          </button>
+          <button
+            onClick={() => setTheme('blue')}
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+              theme === 'blue' ? 'bg-blue-900 text-white shadow-md scale-105' : 'text-blue-800 hover:text-blue-950'
+            }`}
+          >
+            <i className="fas fa-briefcase mr-1"></i> Azul
+          </button>
+        </div>
+      </header>
+
+      {/* Resumen General (Cards) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+        <div className="bg-white rounded-2xl shadow-sm p-5 text-center transition-all duration-300">
+          <div className="text-3xl font-bold dias-transcurridos pulse-gentle">{diasTranscurridos}</div>
+          <div className="text-gray-600 font-medium mt-1">Días Transcurridos</div>
+          <div className="text-xs text-gray-500 mt-1.5">Desde el 17 mar 2025</div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-sm p-5 text-center transition-all duration-300">
+          <div className="text-3xl font-bold descansos-card">{totalDescansos}</div>
+          <div className="text-gray-600 font-medium mt-1">Días de Descanso</div>
+          <div className="text-xs text-emerald-600 font-semibold mt-1.5">{formatearMoneda(valorDescansos)}</div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-sm p-5 text-center transition-all duration-300">
+          <div className="text-3xl font-bold abonos-card">{formatearMoneda(sumaAbonos)}</div>
+          <div className="text-gray-600 font-medium mt-1">Total Abonos</div>
+          <div className="text-xs text-gray-500 mt-1.5">Recibidos a la fecha</div>
+        </div>
+
+        <div className={`bg-white rounded-2xl shadow-sm p-5 text-center transition-all duration-300 ${!vacacionesVisibles ? 'opacity-50' : ''}`}>
+          <div className="text-3xl font-bold vacaciones-card">{vacacionesVisibles ? totalVacaciones : 0}</div>
+          <div className="text-gray-600 font-medium mt-1">Días de Vacaciones</div>
+          <div className="text-xs text-purple-600 font-semibold mt-1.5">
+            {vacacionesVisibles ? formatearMoneda(valorVacaciones) : formatearMoneda(0)}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-sm p-5 text-center transition-all duration-300">
+          <div className="text-3xl font-bold ingresos-card">{formatearMoneda(ingresosPorDias)}</div>
+          <div className="text-gray-600 font-medium mt-1">Ingresos por Días</div>
+          <div className="text-xs text-gray-500 mt-1.5">Días transcurridos × $200</div>
+        </div>
+      </div>
+
+      {/* Información de Fechas y Resumen Financiero */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="bg-white rounded-2xl shadow-sm p-6">
+          <h2 className="text-lg font-bold flex items-center gap-2 mb-4 border-b pb-3">
+            <i className="fas fa-play-circle text-emerald-500"></i>
+            Información del Período
+          </h2>
+          <div className="space-y-3.5">
+            <div className="flex justify-between items-center text-sm md:text-base">
+              <span className="text-gray-600">Fecha de Inicio:</span>
+              <span className="font-semibold text-emerald-600">17 de marzo, 2025</span>
+            </div>
+            <div className="flex justify-between items-center text-sm md:text-base">
+              <span className="text-gray-600">Fecha Actual:</span>
+              <span className="font-semibold text-blue-600">{formatHumanDate(new Date())}</span>
+            </div>
+            <div className="flex justify-between items-center text-sm md:text-base">
+              <span className="text-gray-600">Días Trabajados (Neto):</span>
+              <span className="font-bold text-slate-800 bg-gray-100 px-3 py-1 rounded-full">{diasTrabajados} días</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-sm p-6">
+          <h2 className="text-lg font-bold flex items-center gap-2 mb-4 border-b pb-3">
+            <i className="fas fa-calculator text-blue-500"></i>
+            Resumen Financiero
+          </h2>
+          <div className="space-y-3.5">
+            <div className="flex justify-between items-center text-sm md:text-base">
+              <span className="text-gray-600">Valor por Descanso:</span>
+              <span className="font-semibold text-blue-600">$400</span>
+            </div>
+            <div className="flex justify-between items-center text-sm md:text-base">
+              <span className="text-gray-600">Valor por Día:</span>
+              <span className="font-semibold text-blue-600">$200</span>
+            </div>
+            <div className="flex justify-between items-center border-t pt-3 mt-4">
+              <span className="text-slate-800 font-bold text-base md:text-lg">Total General:</span>
+              <span className="font-bold total-general text-xl pulse-gentle">
+                {formatearMoneda(totalGeneral)}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Panel de Control (Formularios) */}
+      <div className="bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-slate-800/40 dark:to-slate-700/40 rounded-2xl shadow-sm p-6 mb-8 border border-blue-100/50 dark:border-slate-700">
+        <h2 className="text-lg font-bold flex items-center gap-2 mb-4">
+          <i className="fas fa-cogs text-blue-500"></i>
+          Panel de Control
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Agregar Descanso */}
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+            <h3 className="font-semibold flex items-center gap-2 mb-3">
+              <i className="fas fa-plus-circle text-emerald-500"></i>
+              Agregar Día de Descanso
+            </h3>
+            <div className="flex gap-2">
+              <input
+                type="date"
+                value={nuevaFechaDescanso}
+                onChange={(e) => setNuevaFechaDescanso(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAgregarDescanso()}
+                className="flex-1 px-3.5 py-2 border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={handleAgregarDescanso}
+                className="bg-emerald-500 hover:bg-emerald-600 text-white font-medium px-4 py-2 rounded-lg transition-colors flex items-center justify-center cursor-pointer"
+              >
+                <i className="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+
+          {/* Agregar Abono */}
+          <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+            <h3 className="font-semibold flex items-center gap-2 mb-3">
+              <i className="fas fa-hand-holding-usd text-blue-500"></i>
+              Registrar Nuevo Abono
+            </h3>
+            <div className="space-y-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <input
+                  type="date"
+                  value={nuevaFechaAbono}
+                  onChange={(e) => setNuevaFechaAbono(e.target.value)}
+                  className="px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="number"
+                  placeholder="Monto ($)"
+                  value={nuevoMontoAbono}
+                  onChange={(e) => setNuevoMontoAbono(e.target.value)}
+                  className="px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Nota (ej. escuela, pizzas, etc.)"
+                  value={nuevaNotaAbono}
+                  onChange={(e) => setNuevaNotaAbono(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAgregarAbono()}
+                  className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  onClick={handleAgregarAbono}
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded-lg text-sm transition-colors flex items-center justify-center cursor-pointer"
+                >
+                  Registrar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Lista de Días de Descanso */}
+      <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
+        <h2 className="text-lg font-bold flex items-center gap-2 mb-4 border-b pb-3">
+          <i className="fas fa-bed text-purple-600"></i>
+          <span>Días de Descanso ({totalDescansos} días × $400 = {formatearMoneda(valorDescansos)})</span>
+        </h2>
+        {diasDescanso.length === 0 ? (
+          <p className="text-gray-500 italic py-4 text-center">No hay días de descanso registrados.</p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {diasDescanso.map((fechaStr, index) => {
+              const fecha = stringToDate(fechaStr);
+              return (
+                <div
+                  key={index}
+                  className="descanso-item rounded-xl p-3 text-center animate-fade-in relative group transition-all"
+                >
+                  <button
+                    onClick={() => handleEliminarDescanso(fechaStr)}
+                    className="absolute -top-1.5 -right-1.5 bg-rose-500 hover:bg-rose-600 text-white w-5 h-5 rounded-full text-[10px] items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer shadow-md hidden sm:flex"
+                    title="Eliminar descanso"
+                  >
+                    <i className="fas fa-times"></i>
+                  </button>
+                  {/* Para móviles, el botón es visible siempre */}
+                  <button
+                    onClick={() => handleEliminarDescanso(fechaStr)}
+                    className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white w-5 h-5 rounded-full text-[10px] flex items-center justify-center sm:hidden shadow-md cursor-pointer"
+                  >
+                    <i className="fas fa-times"></i>
+                  </button>
+                  <div className="text-xs font-semibold md:text-sm">{formatHumanDate(fecha)}</div>
+                  <div className="text-xs mt-1 font-bold opacity-80">{formatearMoneda(VALOR_DESCANSO)}</div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Lista de Días de Vacaciones */}
+      <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
+        <div className="flex justify-between items-center mb-4 border-b pb-3">
+          <h2 className="text-lg font-bold flex items-center gap-2">
+            <i className="fas fa-umbrella-beach text-orange-500"></i>
+            <span>Días de Vacaciones ({totalVacaciones} días × $600 = {formatearMoneda(valorVacaciones)})</span>
+          </h2>
+          <button
+            onClick={() => setVacacionesVisibles(!vacacionesVisibles)}
+            id="toggle-vacaciones"
+            className="text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 cursor-pointer"
+          >
+            <i className={`fas ${vacacionesVisibles ? 'fa-eye-slash' : 'fa-eye'}`} id="icono-toggle"></i>
+            <span>{vacacionesVisibles ? 'Ocultar' : 'Mostrar'}</span>
+          </button>
+        </div>
+        
+        {vacacionesVisibles && (
+          <div>
+            <p className="text-xs text-gray-500 mb-4 bg-gray-50 dark:bg-slate-700/50 p-2.5 rounded-lg border border-gray-150 dark:border-slate-600">
+              <i className="fas fa-info-circle text-orange-400 mr-1.5"></i>
+              Período de vacaciones: Del 15 de septiembre al 7 de octubre, 2025.
+            </p>
+            {diasVacaciones.length === 0 ? (
+              <p className="text-gray-500 italic py-2 text-center text-sm">No hay días de vacaciones configurados.</p>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                {diasVacaciones.map((fechaStr, index) => {
+                  const fecha = stringToDate(fechaStr);
+                  return (
+                    <div
+                      key={index}
+                      className="vacaciones-item rounded-xl p-3 text-center animate-fade-in"
+                    >
+                      <div className="text-xs font-semibold md:text-sm">{formatHumanDate(fecha)}</div>
+                      <div className="text-xs mt-1 font-bold opacity-80">{formatearMoneda(VALOR_VACACIONES)}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Registro de Abonos */}
+      <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
+        <h2 className="text-lg font-bold flex items-center gap-2 mb-4 border-b pb-3">
+          <i className="fas fa-money-bill-wave text-emerald-500"></i>
+          <span>Registro de Abonos (Total: {formatearMoneda(sumaAbonos)})</span>
+        </h2>
+        {abonos.length === 0 ? (
+          <p className="text-gray-500 italic py-4 text-center">No hay abonos registrados.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {abonos.map((abono, index) => {
+              const fecha = stringToDate(abono.fecha);
+              return (
+                <div
+                  key={index}
+                  className="abono-item rounded-xl p-4 flex justify-between items-center animate-fade-in relative group transition-all"
+                >
+                  <button
+                    onClick={() => handleEliminarAbono(index, abono)}
+                    className="absolute -top-1.5 -right-1.5 bg-rose-500 hover:bg-rose-600 text-white w-5.5 h-5.5 rounded-full text-[10px] items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer shadow-md hidden sm:flex"
+                    title="Eliminar abono"
+                  >
+                    <i className="fas fa-times"></i>
+                  </button>
+                  <button
+                    onClick={() => handleEliminarAbono(index, abono)}
+                    className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white w-5.5 h-5.5 rounded-full text-[10px] flex items-center justify-center sm:hidden shadow-md cursor-pointer"
+                  >
+                    <i className="fas fa-times"></i>
+                  </button>
+                  <div className="flex-1 pr-4">
+                    <div className="font-semibold text-xs md:text-sm">{formatHumanDate(fecha)}</div>
+                    {abono.nota && (
+                      <div className="text-xs mt-1.5 italic opacity-85 leading-relaxed bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded border-l-2 border-emerald-400">
+                        {abono.nota}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-base md:text-lg font-bold whitespace-nowrap">
+                    {formatearMoneda(abono.monto)}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default App

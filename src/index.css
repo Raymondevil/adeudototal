@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
 /* ========================================
    SISTEMA DE COLORES PERSONALIZABLE
    ======================================== */
@@ -59,39 +63,52 @@
     --transition-speed: 0.3s;
 }
 
-/* ========================================
-   TEMAS ALTERNATIVOS
-   ======================================== */
-
-/* TEMA OSCURO - Descomenta para activar */
-/*
-:root {
+/* === TEMA OSCURO === */
+.theme-dark {
     --primary-color: #60A5FA;
     --secondary-color: #A78BFA;
     --accent-color: #34D399;
     --warning-color: #FBBF24;
     --danger-color: #F87171;
     
-    --bg-primary: #111827;
-    --bg-secondary: #1F2937;
-    --bg-card: #374151;
-    --bg-accent: #4B5563;
+    --bg-primary: #0F172A;
+    --bg-secondary: #1E293B;
+    --bg-card: #1E293B;
+    --bg-accent: #334155;
     
-    --text-primary: #F9FAFB;
-    --text-secondary: #D1D5DB;
-    --text-muted: #9CA3AF;
+    --text-primary: #F8FAFC;
+    --text-secondary: #CBD5E1;
+    --text-muted: #64748B;
     --text-white: #FFFFFF;
     
-    --border-light: #4B5563;
-    --border-medium: #6B7280;
+    --dias-color: var(--accent-color);
+    --dias-bg: rgba(52, 211, 153, 0.1);
+    --dias-border: rgba(52, 211, 153, 0.2);
+    
+    --descanso-color: var(--secondary-color);
+    --descanso-bg: rgba(167, 139, 250, 0.1);
+    --descanso-border: rgba(167, 139, 250, 0.2);
+    
+    --abono-color: var(--accent-color);
+    --abono-bg: rgba(52, 211, 153, 0.1);
+    --abono-border: rgba(52, 211, 153, 0.2);
+    
+    --vacaciones-color: #FB923C;
+    --vacaciones-bg: rgba(251, 146, 60, 0.1);
+    --vacaciones-border: rgba(251, 146, 60, 0.2);
+    
+    --ingresos-color: var(--warning-color);
+    --ingresos-bg: rgba(251, 191, 36, 0.1);
+    --ingresos-border: rgba(251, 191, 36, 0.2);
+
+    --border-light: #334155;
+    --border-medium: #475569;
     --shadow-light: rgba(0, 0, 0, 0.3);
     --shadow-medium: rgba(0, 0, 0, 0.5);
 }
-*/
 
-/* TEMA VERDE NATURALEZA - Descomenta para activar */
-/*
-:root {
+/* === TEMA VERDE NATURALEZA === */
+.theme-green {
     --primary-color: #059669;
     --secondary-color: #0D9488;
     --accent-color: #10B981;
@@ -103,17 +120,39 @@
     --bg-card: #FFFFFF;
     --bg-accent: #ECFDF5;
     
+    --text-primary: #064E3B;
+    --text-secondary: #047857;
+    --text-muted: #6EE7B7;
+    --text-white: #FFFFFF;
+    
     --dias-color: #059669;
+    --dias-bg: #ECFDF5;
+    --dias-border: #A7F3D0;
+    
     --descanso-color: #0D9488;
-    --vacaciones-color: #F59E0B;
+    --descanso-bg: #F0FDFA;
+    --descanso-border: #CCFBF1;
+    
     --abono-color: #10B981;
+    --abono-bg: #ECFDF5;
+    --abono-border: #D1FAE5;
+    
+    --vacaciones-color: #F59E0B;
+    --vacaciones-bg: #FFFBEB;
+    --vacaciones-border: #FEF3C7;
+    
     --ingresos-color: #D97706;
-}
-*/
+    --ingresos-bg: #FFFBEB;
+    --ingresos-border: #FED7AA;
 
-/* TEMA AZUL PROFESIONAL - Descomenta para activar */
-/*
-:root {
+    --border-light: #D1FAE5;
+    --border-medium: #A7F3D0;
+    --shadow-light: rgba(5, 150, 105, 0.05);
+    --shadow-medium: rgba(5, 150, 105, 0.1);
+}
+
+/* === TEMA AZUL PROFESIONAL === */
+.theme-blue {
     --primary-color: #1E40AF;
     --secondary-color: #3730A3;
     --accent-color: #0EA5E9;
@@ -125,23 +164,44 @@
     --bg-card: #FFFFFF;
     --bg-accent: #EFF6FF;
     
+    --text-primary: #1E3A8A;
+    --text-secondary: #1D4ED8;
+    --text-muted: #93C5FD;
+    --text-white: #FFFFFF;
+    
     --dias-color: #0EA5E9;
+    --dias-bg: #F0F9FF;
+    --dias-border: #E0F2FE;
+    
     --descanso-color: #3730A3;
-    --vacaciones-color: #F59E0B;
+    --descanso-bg: #EEF2FF;
+    --descanso-border: #E0E7FF;
+    
     --abono-color: #1E40AF;
+    --abono-bg: #EFF6FF;
+    --abono-border: #DBEAFE;
+    
+    --vacaciones-color: #F59E0B;
+    --vacaciones-bg: #FFFBEB;
+    --vacaciones-border: #FEF3C7;
+    
     --ingresos-color: #EA580C;
-}
-*/
+    --ingresos-bg: #FFF7ED;
+    --ingresos-border: #FFEDD5;
 
-/* ========================================
-   APLICACIÓN DE COLORES PERSONALIZADOS
-   ======================================== */
+    --border-light: #DBEAFE;
+    --border-medium: #BFDBFE;
+    --shadow-light: rgba(30, 64, 175, 0.05);
+    --shadow-medium: rgba(30, 64, 175, 0.1);
+}
 
 /* Fondo principal */
 body {
     background-color: var(--bg-primary) !important;
     color: var(--text-primary) !important;
     transition: all var(--transition-speed) ease;
+    margin: 0;
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
 }
 
 /* Tarjetas principales */
@@ -185,6 +245,7 @@ h1, h2, h3 {
     background-color: var(--descanso-bg) !important;
     border-color: var(--descanso-border) !important;
     color: var(--descanso-color) !important;
+    border-width: 1px;
 }
 
 /* Elementos de abono */
@@ -192,6 +253,7 @@ h1, h2, h3 {
     background-color: var(--abono-bg) !important;
     border-color: var(--abono-border) !important;
     color: var(--abono-color) !important;
+    border-width: 1px;
 }
 
 /* Elementos de vacaciones */
@@ -199,6 +261,7 @@ h1, h2, h3 {
     background-color: var(--vacaciones-bg) !important;
     border-color: var(--vacaciones-border) !important;
     color: var(--vacaciones-color) !important;
+    border-width: 1px;
 }
 
 /* Iconos */
@@ -294,25 +357,12 @@ h1, h2, h3 {
     animation: pulse-gentle 2s infinite;
 }
 
-/* ========================================
-   RESPONSIVE DESIGN
-   ======================================== */
-
 @media (max-width: 768px) {
-    :root {
-        --shadow-light: rgba(0, 0, 0, 0.03);
-        --shadow-medium: rgba(0, 0, 0, 0.08);
-    }
-    
     .bg-white:hover {
         transform: none;
         box-shadow: 0 4px 12px var(--shadow-light);
     }
 }
-
-/* ========================================
-   MODO DE IMPRESIÓN
-   ======================================== */
 
 @media print {
     :root {
