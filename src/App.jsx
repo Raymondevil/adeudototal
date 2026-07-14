@@ -117,6 +117,10 @@ function App() {
     return localStorage.getItem('theme') || 'light';
   });
 
+  const [viewMode, setViewMode] = useState(() => {
+    return localStorage.getItem('viewMode') || 'grid';
+  });
+
   // --- Estados de Inputs ---
   const [nuevaFechaDescanso, setNuevaFechaDescanso] = useState('');
   const [nuevaFechaAbono, setNuevaFechaAbono] = useState('');
@@ -151,6 +155,10 @@ function App() {
       document.body.classList.add(`theme-${theme}`);
     }
   }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem('viewMode', viewMode);
+  }, [viewMode]);
 
   // --- Sistema de Notificaciones ---
   const showNotification = (mensaje, tipo = 'info') => {
@@ -280,40 +288,63 @@ function App() {
           <p className="text-gray-600 mt-1">Seguimiento interactivo de días trabajados, descansos y abonos</p>
         </div>
 
-        {/* Theme Pill Switcher */}
-        <div className="bg-gray-200/80 dark:bg-slate-700/80 p-1.5 rounded-full flex gap-1 items-center self-start md:self-center shadow-inner">
-          <button
-            onClick={() => setTheme('light')}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
-              theme === 'light' ? 'bg-white text-blue-600 shadow-md scale-105' : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <i className="fas fa-sun mr-1"></i> Claro
-          </button>
-          <button
-            onClick={() => setTheme('dark')}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
-              theme === 'dark' ? 'bg-slate-900 text-blue-400 shadow-md scale-105' : 'text-gray-400 hover:text-slate-200'
-            }`}
-          >
-            <i className="fas fa-moon mr-1"></i> Oscuro
-          </button>
-          <button
-            onClick={() => setTheme('green')}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
-              theme === 'green' ? 'bg-emerald-600 text-white shadow-md scale-105' : 'text-emerald-700 hover:text-emerald-950'
-            }`}
-          >
-            <i className="fas fa-leaf mr-1"></i> Verde
-          </button>
-          <button
-            onClick={() => setTheme('blue')}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
-              theme === 'blue' ? 'bg-blue-900 text-white shadow-md scale-105' : 'text-blue-800 hover:text-blue-950'
-            }`}
-          >
-            <i className="fas fa-briefcase mr-1"></i> Azul
-          </button>
+        {/* Switchers (View & Theme) */}
+        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center self-start md:self-center">
+          {/* Selector de Vista (Cuadrícula / Tabla) */}
+          <div className="bg-gray-200/80 dark:bg-slate-700/80 p-1.5 rounded-full flex gap-1 items-center shadow-inner">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 flex items-center gap-1 cursor-pointer ${
+                viewMode === 'grid' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-md scale-105' : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white'
+              }`}
+            >
+              <i className="fas fa-th-large"></i> Cuadrícula
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 flex items-center gap-1 cursor-pointer ${
+                viewMode === 'list' ? 'bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-md scale-105' : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-white'
+              }`}
+            >
+              <i className="fas fa-table"></i> Tabla
+            </button>
+          </div>
+
+          {/* Theme Pill Switcher */}
+          <div className="bg-gray-200/80 dark:bg-slate-700/80 p-1.5 rounded-full flex gap-1 items-center shadow-inner">
+            <button
+              onClick={() => setTheme('light')}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                theme === 'light' ? 'bg-white text-blue-600 shadow-md scale-105' : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <i className="fas fa-sun mr-1"></i> Claro
+            </button>
+            <button
+              onClick={() => setTheme('dark')}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                theme === 'dark' ? 'bg-slate-900 text-blue-400 shadow-md scale-105' : 'text-gray-400 hover:text-slate-200'
+              }`}
+            >
+              <i className="fas fa-moon mr-1"></i> Oscuro
+            </button>
+            <button
+              onClick={() => setTheme('green')}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                theme === 'green' ? 'bg-emerald-600 text-white shadow-md scale-105' : 'text-emerald-700 hover:text-emerald-950'
+              }`}
+            >
+              <i className="fas fa-leaf mr-1"></i> Verde
+            </button>
+            <button
+              onClick={() => setTheme('blue')}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                theme === 'blue' ? 'bg-blue-900 text-white shadow-md scale-105' : 'text-blue-800 hover:text-blue-950'
+              }`}
+            >
+              <i className="fas fa-briefcase mr-1"></i> Azul
+            </button>
+          </div>
         </div>
       </header>
 
@@ -480,7 +511,7 @@ function App() {
         </h2>
         {diasDescanso.length === 0 ? (
           <p className="text-gray-500 italic py-4 text-center">No hay días de descanso registrados.</p>
-        ) : (
+        ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
             {diasDescanso.map((fechaStr, index) => {
               const fecha = stringToDate(fechaStr);
@@ -508,6 +539,40 @@ function App() {
                 </div>
               );
             })}
+          </div>
+        ) : (
+          <div className="overflow-x-auto rounded-xl border border-gray-200/60 dark:border-slate-700/60 shadow-sm">
+            <table className="w-full text-left border-collapse bg-white dark:bg-slate-800">
+              <thead>
+                <tr className="border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">
+                  <th className="py-3 px-4 w-12 text-center">#</th>
+                  <th className="py-3 px-4">Fecha</th>
+                  <th className="py-3 px-4 text-right">Monto</th>
+                  <th className="py-3 px-4 text-center w-24">Acciones</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-150 dark:divide-slate-700/50 text-sm">
+                {diasDescanso.map((fechaStr, index) => {
+                  const fecha = stringToDate(fechaStr);
+                  return (
+                    <tr key={index} className="hover:bg-gray-50/50 dark:hover:bg-slate-700/20 transition-colors">
+                      <td className="py-3 px-4 text-center font-medium text-gray-400">{index + 1}</td>
+                      <td className="py-3 px-4 font-semibold text-gray-800 dark:text-slate-200">{formatHumanDate(fecha)}</td>
+                      <td className="py-3 px-4 text-right font-bold text-purple-600 dark:text-purple-400">{formatearMoneda(VALOR_DESCANSO)}</td>
+                      <td className="py-3 px-4 text-center">
+                        <button
+                          onClick={() => handleEliminarDescanso(fechaStr)}
+                          className="bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 px-2.5 py-1 rounded-md text-xs font-medium cursor-pointer transition-colors inline-flex items-center gap-1"
+                          title="Eliminar descanso"
+                        >
+                          <i className="fas fa-trash-alt"></i> <span>Eliminar</span>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
@@ -537,7 +602,7 @@ function App() {
             </p>
             {diasVacaciones.length === 0 ? (
               <p className="text-gray-500 italic py-2 text-center text-sm">No hay días de vacaciones configurados.</p>
-            ) : (
+            ) : viewMode === 'grid' ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                 {diasVacaciones.map((fechaStr, index) => {
                   const fecha = stringToDate(fechaStr);
@@ -552,6 +617,30 @@ function App() {
                   );
                 })}
               </div>
+            ) : (
+              <div className="overflow-x-auto rounded-xl border border-gray-200/60 dark:border-slate-700/60 shadow-sm">
+                <table className="w-full text-left border-collapse bg-white dark:bg-slate-800">
+                  <thead>
+                    <tr className="border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">
+                      <th className="py-3 px-4 w-12 text-center">#</th>
+                      <th className="py-3 px-4">Fecha</th>
+                      <th className="py-3 px-4 text-right">Monto</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-150 dark:divide-slate-700/50 text-sm">
+                    {diasVacaciones.map((fechaStr, index) => {
+                      const fecha = stringToDate(fechaStr);
+                      return (
+                        <tr key={index} className="hover:bg-gray-50/50 dark:hover:bg-slate-700/20 transition-colors">
+                          <td className="py-3 px-4 text-center font-medium text-gray-400">{index + 1}</td>
+                          <td className="py-3 px-4 font-semibold text-gray-800 dark:text-slate-200">{formatHumanDate(fecha)}</td>
+                          <td className="py-3 px-4 text-right font-bold text-orange-600 dark:text-orange-400">{formatearMoneda(VALOR_VACACIONES)}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         )}
@@ -565,7 +654,7 @@ function App() {
         </h2>
         {abonos.length === 0 ? (
           <p className="text-gray-500 italic py-4 text-center">No hay abonos registrados.</p>
-        ) : (
+        ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {abonos.map((abono, index) => {
               const fecha = stringToDate(abono.fecha);
@@ -601,6 +690,50 @@ function App() {
                 </div>
               );
             })}
+          </div>
+        ) : (
+          <div className="overflow-x-auto rounded-xl border border-gray-200/60 dark:border-slate-700/60 shadow-sm">
+            <table className="w-full text-left border-collapse bg-white dark:bg-slate-800">
+              <thead>
+                <tr className="border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">
+                  <th className="py-3 px-4 w-12 text-center">#</th>
+                  <th className="py-3 px-4">Fecha</th>
+                  <th className="py-3 px-4">Nota / Concepto</th>
+                  <th className="py-3 px-4 text-right">Monto</th>
+                  <th className="py-3 px-4 text-center w-24">Acciones</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-150 dark:divide-slate-700/50 text-sm">
+                {abonos.map((abono, index) => {
+                  const fecha = stringToDate(abono.fecha);
+                  return (
+                    <tr key={index} className="hover:bg-gray-50/50 dark:hover:bg-slate-700/20 transition-colors">
+                      <td className="py-3 px-4 text-center font-medium text-gray-400">{index + 1}</td>
+                      <td className="py-3 px-4 font-semibold text-gray-800 dark:text-slate-200">{formatHumanDate(fecha)}</td>
+                      <td className="py-3 px-4">
+                        {abono.nota ? (
+                          <span className="italic text-gray-600 dark:text-slate-300 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded border-l-2 border-emerald-400 block text-xs leading-relaxed max-w-md">
+                            {abono.nota}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 italic text-xs">Sin nota</span>
+                        )}
+                      </td>
+                      <td className="py-3 px-4 text-right font-bold text-emerald-600 dark:text-emerald-400">{formatearMoneda(abono.monto)}</td>
+                      <td className="py-3 px-4 text-center">
+                        <button
+                          onClick={() => handleEliminarAbono(index, abono)}
+                          className="bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 px-2.5 py-1 rounded-md text-xs font-medium cursor-pointer transition-colors inline-flex items-center gap-1"
+                          title="Eliminar abono"
+                        >
+                          <i className="fas fa-trash-alt"></i> <span>Eliminar</span>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
