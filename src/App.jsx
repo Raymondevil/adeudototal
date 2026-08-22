@@ -15,7 +15,7 @@ const MESES = [
 
 // Datos iniciales en caso de no existir en localStorage
 const INITIAL_DIAS_DESCANSO = [
-  "20-marzo-2025", "21-marzo-2025", "23-marzo-2025", "24-marzo-2025", "25-marzo-2025", "06-abril-2025", "13-abril-2025", "21-abril-2025", "22-abril-2025", "23-abril-2025", "27-abril-2025", "01-mayo-2025", "14-mayo-2025", "23-mayo-2025", "01-junio-2025", "08-junio-2025", "15-junio-2025", "22-junio-2025", "29-junio-2025", "05-julio-2025", "13-julio-2025", "19-julio-2025", "27-julio-2025", "03-agosto-2025", "10-agosto-2025", "16-agosto-2025", "17-agosto-2025", "18-agosto-2025", "24-agosto-2025", "07-septiembre-2025", "14-septiembre-2025", "21-septiembre-2025", "28-septiembre-2025", "05-octubre-2025", "12-octubre-2025", "17-octubre-2025", "27-octubre-2025", "07-noviembre-2025", "23-noviembre-2025", "26-noviembre-2025", "07-diciembre-2025", "14-diciembre-2025", "21-diciembre-2025", "23-diciembre-2025", "24-diciembre-2025", "25-diciembre-2025", "26-diciembre-2025", "27-diciembre-2025", "29-diciembre-2025", "30-diciembre-2025", "01-enero-2026", "02-enero-2026", "03-enero-2026", "04-enero-2026", "05-enero-2026", "06-enero-2026", "07-enero-2026", "08-febrero-2026", "15-febrero-2026", "05-julio-2026"
+"20-Marzo-2025", "21-Marzo-2025", "23-Marzo-2025", "24-Marzo-2025", "25-Marzo-2025", "06-Abril-2025", "13-Abril-2025", "21-Abril-2025", "22-Abril-2025", "23-Abril-2025", "27-Abril-2025", "01-Mayo-2025", "14-Mayo-2025", "23-Mayo-2025", "01-Junio-2025", "08-Junio-2025", "15-Junio-2025", "22-Junio-2025", "29-Junio-2025", "05-Julio-2025", "06-Julio-2025", "13-Julio-2025", "19-Julio-2025", "20-Julio-2025", "27-Julio-2025", "03-Agosto-2025", "10-Agosto-2025", "16-Agosto-2025", "17-Agosto-2025", "18-Agosto-2025", "24-Agosto-2025", "07-Septiembre-2025", "14-Septiembre-2025", "21-Septiembre-2025", "28-Septiembre-2025", "05-Octubre-2025", "12-Octubre-2025", "17-Octubre-2025", "27-Octubre-2025", "07-Noviembre-2025", "23-Noviembre-2025", "26-Noviembre-2025", "07-Diciembre-2025", "14-Diciembre-2025", "21-Diciembre-2025", "23-Diciembre-2025", "24-Diciembre-2025", "25-Diciembre-2025", "26-Diciembre-2025", "27-Diciembre-2025", "28-Diciembre-2025", "29-Diciembre-2025", "30-Diciembre-2025", "31-Diciembre-2025", "01-Enero-2026", "02-Enero-2026", "03-Enero-2026", "04-Enero-2026", "05-Enero-2026", "06-Enero-2026", "07-Enero-2026", "08-Febrero-2026", "15-Febrero-2026", "05-Julio-2026", "12-Julio-2026", "16-Julio-2026", "17-Julio-2026", "26-Julio-2026", "02-Agosto-2026", "09-Agosto-2026", "16-Agosto-2026"
 ];
 
 const INITIAL_DIAS_VACACIONES = [
@@ -246,8 +246,8 @@ function App() {
 
   const hoy = new Date();
   const diasPrimerPeriodo = calcularDiasEntreFechas(FECHA_INICIO, FECHA_FIN_PRIMER_PERIODO);
-  const diasSegundoPeriodo = hoy >= FECHA_INICIO_SEGUNDO_PERIODO 
-    ? calcularDiasEntreFechas(FECHA_INICIO_SEGUNDO_PERIODO, hoy) 
+  const diasSegundoPeriodo = hoy >= FECHA_INICIO_SEGUNDO_PERIODO
+    ? calcularDiasEntreFechas(FECHA_INICIO_SEGUNDO_PERIODO, hoy)
     : 0;
   const diasTranscurridos = diasPrimerPeriodo + diasSegundoPeriodo;
 
