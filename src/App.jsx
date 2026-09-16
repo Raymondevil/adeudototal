@@ -15,7 +15,7 @@ const MESES = [
 
 // Datos iniciales en caso de no existir en localStorage
 const INITIAL_DIAS_DESCANSO = [
-"20-Marzo-2025", "21-Marzo-2025", "23-Marzo-2025", "24-Marzo-2025", "25-Marzo-2025", "06-Abril-2025", "13-Abril-2025", "21-Abril-2025", "22-Abril-2025", "23-Abril-2025", "27-Abril-2025", "01-Mayo-2025", "14-Mayo-2025", "23-Mayo-2025", "01-Junio-2025", "08-Junio-2025", "15-Junio-2025", "22-Junio-2025", "29-Junio-2025", "05-Julio-2025", "06-Julio-2025", "13-Julio-2025", "19-Julio-2025", "20-Julio-2025", "27-Julio-2025", "03-Agosto-2025", "10-Agosto-2025", "16-Agosto-2025", "17-Agosto-2025", "18-Agosto-2025", "24-Agosto-2025", "07-Septiembre-2025", "14-Septiembre-2025", "21-Septiembre-2025", "28-Septiembre-2025", "05-Octubre-2025", "12-Octubre-2025", "17-Octubre-2025", "27-Octubre-2025", "07-Noviembre-2025", "23-Noviembre-2025", "26-Noviembre-2025", "07-Diciembre-2025", "14-Diciembre-2025", "21-Diciembre-2025", "23-Diciembre-2025", "24-Diciembre-2025", "25-Diciembre-2025", "26-Diciembre-2025", "27-Diciembre-2025", "28-Diciembre-2025", "29-Diciembre-2025", "30-Diciembre-2025", "31-Diciembre-2025", "01-Enero-2026", "02-Enero-2026", "03-Enero-2026", "04-Enero-2026", "05-Enero-2026", "06-Enero-2026", "07-Enero-2026", "08-Febrero-2026", "15-Febrero-2026", "05-Julio-2026", "12-Julio-2026", "16-Julio-2026", "17-Julio-2026", "26-Julio-2026", "02-Agosto-2026", "09-Agosto-2026", "16-Agosto-2026"
+"2025-03-20", "2025-03-21", "2025-03-23", "2025-03-24", "2025-03-25", "2025-04-06", "2025-04-13", "2025-04-21", "2025-04-22", "2025-04-23", "2025-04-27", "2025-05-01", "2025-05-14", "2025-05-23", "2025-06-01", "2025-06-08", "2025-06-15", "2025-06-22", "2025-06-29", "2025-07-05", "2025-07-06", "2025-07-13", "2025-07-19", "2025-07-20", "2025-07-27", "2025-08-03", "2025-08-10", "2025-08-16", "2025-08-17", "2025-08-18", "2025-08-24", "2025-09-07", "2025-09-14", "2025-09-21", "2025-09-28", "2025-10-05", "2025-10-12", "2025-10-17", "2025-10-27", "2025-11-07", "2025-11-23", "2025-11-26", "2025-12-07", "2025-12-14", "2025-12-21", "2025-12-23", "2025-12-24", "2025-12-25", "2025-12-26", "2025-12-27", "2025-12-28", "2025-12-29", "2025-12-30", "2025-12-31", "2026-01-01", "2026-01-02", "2026-01-03", "2026-01-04", "2026-01-05", "2026-01-06", "2026-01-18", "2026-01-25", "2026-02-01", "2026-02-08", "2026-02-15", "2026-03-12", "2026-03-23", "2026-07-05", "2026-07-12", "2026-07-16", "2026-07-17", "2026-07-26", "2026-08-02", "2026-08-09", "2026-08-16", "2026-08-23", "2026-09-06", "2026-09-13"
 ];
 
 const INITIAL_DIAS_VACACIONES = [
@@ -56,6 +56,9 @@ const INITIAL_ABONOS = [
   {fecha: "21-junio-2026", monto: 1000, nota: "dia del padre"},
   {fecha: "24-junio-2026", monto: 1000, nota: "Dia que jugo la seleccion"},
   {fecha: "03-julio-2026", monto: 3000, nota: "dia que me cambie de casa de abajo para arriba"}
+  {fecha: "21-julio-2026", monto: 1000, nota: "dia que la nina andaba amanecida"}
+  {fecha: "08-agosto-2026", monto: 3000, nota: "Dia que se fue la luz en la cuadra"}
+  {fecha: "01-septiembre-2026", monto: 1500, nota: "para pagar colegiatura y libros"}
 ];
 
 // Helper functions para el formateo y conversión de fechas
