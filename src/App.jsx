@@ -15,7 +15,7 @@ const MESES = [
 
 // Datos iniciales en caso de no existir en localStorage
 const INITIAL_DIAS_DESCANSO = [
-"2025-03-20", "2025-03-21", "2025-03-23", "2025-03-24", "2025-03-25", "2025-04-06", "2025-04-13", "2025-04-21", "2025-04-22", "2025-04-23", "2025-04-27", "2025-05-01", "2025-05-14", "2025-05-23", "2025-06-01", "2025-06-08", "2025-06-15", "2025-06-22", "2025-06-29", "2025-07-05", "2025-07-06", "2025-07-13", "2025-07-19", "2025-07-20", "2025-07-27", "2025-08-03", "2025-08-10", "2025-08-16", "2025-08-17", "2025-08-18", "2025-08-24", "2025-09-07", "2025-09-14", "2025-09-21", "2025-09-28", "2025-10-05", "2025-10-12", "2025-10-17", "2025-10-27", "2025-11-07", "2025-11-23", "2025-11-26", "2025-12-07", "2025-12-14", "2025-12-21", "2025-12-23", "2025-12-24", "2025-12-25", "2025-12-26", "2025-12-27", "2025-12-28", "2025-12-29", "2025-12-30", "2025-12-31", "2026-01-01", "2026-01-02", "2026-01-03", "2026-01-04", "2026-01-05", "2026-01-06", "2026-01-18", "2026-01-25", "2026-02-01", "2026-02-08", "2026-02-15", "2026-03-12", "2026-03-23", "2026-07-05", "2026-07-12", "2026-07-16", "2026-07-17", "2026-07-26", "2026-08-02", "2026-08-09", "2026-08-16", "2026-08-23", "2026-09-06", "2026-09-13"
+"20-Marzo-2025", "21-Marzo-2025", "23-Marzo-2025", "24-Marzo-2025", "25-Marzo-2025", "06-Abril-2025", "13-Abril-2025", "21-Abril-2025", "22-Abril-2025", "23-Abril-2025", "27-Abril-2025", "01-Mayo-2025", "14-Mayo-2025", "23-Mayo-2025", "01-Junio-2025", "08-Junio-2025", "15-Junio-2025", "22-Junio-2025", "29-Junio-2025", "05-Julio-2025", "06-Julio-2025", "13-Julio-2025", "19-Julio-2025", "20-Julio-2025", "27-Julio-2025", "03-Agosto-2025", "10-Agosto-2025", "16-Agosto-2025", "17-Agosto-2025", "18-Agosto-2025", "24-Agosto-2025", "07-Septiembre-2025", "14-Septiembre-2025", "21-Septiembre-2025", "28-Septiembre-2025", "05-Octubre-2025", "12-Octubre-2025", "17-Octubre-2025", "27-Octubre-2025", "07-Noviembre-2025", "23-Noviembre-2025", "26-Noviembre-2025", "07-Diciembre-2025", "14-Diciembre-2025", "21-Diciembre-2025", "23-Diciembre-2025", "24-Diciembre-2025", "25-Diciembre-2025", "26-Diciembre-2025", "27-Diciembre-2025", "28-Diciembre-2025", "29-Diciembre-2025", "30-Diciembre-2025", "31-Diciembre-2025", "01-Enero-2026", "02-Enero-2026", "03-Enero-2026", "04-Enero-2026", "05-Enero-2026", "06-Enero-2026", "18-Enero-2026", "25-Enero-2026", "01-Febrero-2026", "08-Febrero-2026", "15-Febrero-2026", "12-Marzo-2026", "23-Marzo-2026", "05-Julio-2026", "12-Julio-2026", "16-Julio-2026", "17-Julio-2026", "26-Julio-2026", "02-Agosto-2026", "09-Agosto-2026", "16-Agosto-2026", "23-Agosto-2026", "06-Septiembre-2026", "13-Septiembre-2026"
 ];
 
 const INITIAL_DIAS_VACACIONES = [
@@ -24,41 +24,39 @@ const INITIAL_DIAS_VACACIONES = [
 ];
 
 const INITIAL_ABONOS = [
-  {fecha: "11-mayo-2025", monto: 3700, nota: "fue el dia que le pase la cuenta de la deuda"},
-  {fecha: "16-junio-2025", monto: 3600, nota: "fue el dia de la pitahaya casa abajo"},
-  {fecha: "30-junio-2025", monto: 3600, nota: "fue el dia que me pidio agua"},
-  {fecha: "10-agosto-2025", monto: 3600, nota: "dia que me los dio en las pizzas del parque"},
-  {fecha: "30-agosto-2025", monto: 1800, nota: "fue el dia que tome ballenas"},
-  {fecha: "03-septiembre-2025", monto: 3000, nota: "Para el pago de la escuela me los dio en la casa de abajo"},
-  {fecha: "02-octubre-2025", monto: 3000, nota: "pagar la escuela jueves madrugada"},
-  {fecha: "08-octubre-2025", monto: 800, nota: "dia que el gordo prendio la moto de mencha"},
-  {fecha: "10-octubre-2025", monto: 1000, nota: "Dia de botes y puli faros al lagañoso"},
-  {fecha: "13-octubre-2025", monto: 1000, nota: "Cuando no vinieron a trabajar"},
-  {fecha: "15-octubre-2025", monto: 900, nota: "fue cuando le pase corriente al carro"},
-  {fecha: "18-octubre-2025", monto: 900, nota: "sábado no funcionaba mi celular"},
-  {fecha: "22-octubre-2025", monto: 900, nota: "arme compu de piti"},
-  {fecha: "23-octubre-2025", monto: 900, nota: "mencha andaba amanecido"},
-  {fecha: "03-noviembre-2025", monto: 3000, nota: "pagar escuela"},
-  {fecha: "03-enero-2026", monto: 3000, nota: "Domingo casa arriba"},
-  {fecha: "16-febrero-2026", monto: 3000, nota: "Dia que trabajo el pollo"},
-  {fecha: "24-febrero-2026", monto: 3000, nota: "recuperacion"},
-  {fecha: "02-marzo-2026", monto: 3000, nota: "llego con la lap casa abajo"},
-  {fecha: "26-marzo-2026", monto: 3000, nota: "pagar colegiatura dormi en la casa de abajo"},
-  {fecha: "04-abril-2026", monto: 1500, nota: "visita doctor"},
-  {fecha: "14-abril-2026", monto: 600, nota: "terapia"},
-  {fecha: "18-abril-2026", monto: 600, nota: "terapia"},
-  {fecha: "21-abril-2026", monto: 600, nota: "terapia"},
-  {fecha: "28-abril-2026", monto: 2000, nota: "para mensualidad escuela"},
-  {fecha: "29-abril-2026", monto: 1000, nota: "faltaban de un dia antes"},
-  {fecha: "21-mayo-2026", monto: 1000, nota: "cuando no fue chuky"},
-  {fecha: "01-junio-2026", monto: 3000, nota: "Fiesta plaza los fresnos"},
-  {fecha: "15-junio-2026", monto: 1000, nota: "dia que estaba enfermo"},
-  {fecha: "21-junio-2026", monto: 1000, nota: "dia del padre"},
-  {fecha: "24-junio-2026", monto: 1000, nota: "Dia que jugo la seleccion"},
-  {fecha: "03-julio-2026", monto: 3000, nota: "dia que me cambie de casa de abajo para arriba"}
-  {fecha: "21-julio-2026", monto: 1000, nota: "dia que la nina andaba amanecida"}
-  {fecha: "08-agosto-2026", monto: 3000, nota: "Dia que se fue la luz en la cuadra"}
-  {fecha: "01-septiembre-2026", monto: 1500, nota: "para pagar colegiatura y libros"}
+{fecha: "11-Mayo-2025", monto: 3700, nota: "Dia que pase la deuda"},
+{fecha: "17-Junio-2025", monto: 3600, nota: "El dia que traia la pitahaya"},
+{fecha: "30-Junio-2025", monto: 3600, nota: "Dia que me pidio agua"},
+{fecha: "03-Septiembre-2025", monto: 3000, nota: "Para el pago de la escuela me los dio en la casa de abajo"},
+{fecha: "02-Octubre-2025", monto: 3000, nota: "Pagar la escuela jueves madrugada"},
+{fecha: "08-Octubre-2025", monto: 800, nota: "Dia que el gordo prendio la moto de mencha"},
+{fecha: "10-Octubre-2025", monto: 1000, nota: "Dia de botes y puli faros al laganoso"},
+{fecha: "13-Octubre-2025", monto: 1000, nota: "Cuando no vinieron a trabajar"},
+{fecha: "15-Octubre-2025", monto: 900, nota: "Fue cuando le pase corriente al carro"},
+{fecha: "18-Octubre-2025", monto: 900, nota: "Sabado no funcionaba mi celular"},
+{fecha: "22-Octubre-2025", monto: 900, nota: "Arme compu de piti"},
+{fecha: "23-Octubre-2025", monto: 900, nota: "Mencha andaba amanecido"},
+{fecha: "03-Noviembre-2025", monto: 3000, nota: "Pagar escuela"},
+{fecha: "02-Enero-2026", monto: 3000, nota: "Domingo casa arriba"},
+{fecha: "16-Febrero-2026", monto: 3000, nota: "Dia que trabajo el pollo"},
+{fecha: "24-Febrero-2026", monto: 3000, nota: "Recuperacion"},
+{fecha: "02-Marzo-2026", monto: 3000, nota: "Llego con la lap casa abajo"},
+{fecha: "26-Marzo-2026", monto: 3000, nota: "Pagar colegiatura dormi en la casa de abajo"},
+{fecha: "04-Abril-2026", monto: 1500, nota: "Visita doctor"},
+{fecha: "14-Abril-2026", monto: 600, nota: "Terapia"},
+{fecha: "18-Abril-2026", monto: 600, nota: "Terapia"},
+{fecha: "21-Abril-2026", monto: 600, nota: "Terapia"},
+{fecha: "28-Abril-2026", monto: 2000, nota: "Para mensualidad escuela"},
+{fecha: "29-Abril-2026", monto: 1000, nota: "Faltaban de un dia antes"},
+{fecha: "21-Mayo-2026", monto: 1000, nota: "Cuando no fue chuky"},
+{fecha: "01-Junio-2026", monto: 3000, nota: "Fiesta plaza los fresnos"},
+{fecha: "15-Junio-2026", monto: 1000, nota: "Dia que estaba enfermo"},
+{fecha: "21-Junio-2026", monto: 1000, nota: "Dia del padre"},
+{fecha: "24-Junio-2026", monto: 1000, nota: "Dia que jugo la seleccion"},
+{fecha: "03-Julio-2026", monto: 3000, nota: "Dia que me cambie de casa de abajo para arriba"},
+{fecha: "21-Julio-2026", monto: 1000, nota: "Dia que nina andaba amanecida"},
+{fecha: "09-Agosto-2026", monto: 3000, nota: "Dia que se fue la luz en la cuadra"},
+{fecha: "01-Septiembre-2026", monto: 1500, nota: "Para pagar colegiatura"},
 ];
 
 // Helper functions para el formateo y conversión de fechas
