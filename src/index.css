@@ -314,6 +314,42 @@ h1, h2, h3 {
     transform: translateY(0);
 }
 
+/* Botón toggle de descansos */
+#toggle-descansos {
+    background-color: var(--descanso-color) !important;
+    transition: all var(--transition-speed) ease;
+    font-size: 0.875rem;
+    font-weight: 500;
+    box-shadow: 0 2px 4px var(--shadow-light);
+}
+
+#toggle-descansos:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--shadow-medium);
+}
+
+#toggle-descansos:active {
+    transform: translateY(0);
+}
+
+/* Botón toggle de abonos */
+#toggle-abonos {
+    background-color: var(--abono-color) !important;
+    transition: all var(--transition-speed) ease;
+    font-size: 0.875rem;
+    font-weight: 500;
+    box-shadow: 0 2px 4px var(--shadow-light);
+}
+
+#toggle-abonos:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--shadow-medium);
+}
+
+#toggle-abonos:active {
+    transform: translateY(0);
+}
+
 /* Animación del icono toggle */
 #icono-toggle {
     transition: transform var(--transition-speed) ease;

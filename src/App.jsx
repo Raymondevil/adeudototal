@@ -196,6 +196,16 @@ function App() {
     return saved ? JSON.parse(saved) === 'true' : false;
   });
 
+  const [descansosVisibles, setDescansosVisibles] = useState(() => {
+    const saved = localStorage.getItem('descansosVisibles');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+
+  const [abonosVisibles, setAbonosVisibles] = useState(() => {
+    const saved = localStorage.getItem('abonosVisibles');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('theme') || 'light';
   });
@@ -231,6 +241,14 @@ function App() {
   }, [vacacionesVisibles]);
 
   useEffect(() => {
+    localStorage.setItem('descansosVisibles', JSON.stringify(descansosVisibles));
+  }, [descansosVisibles]);
+
+  useEffect(() => {
+    localStorage.setItem('abonosVisibles', JSON.stringify(abonosVisibles));
+  }, [abonosVisibles]);
+
+  useEffect(() => {
     localStorage.setItem('theme', theme);
     // Cambiar la clase en el body para aplicar los estilos CSS
     document.body.className = '';
@@ -253,6 +271,14 @@ function App() {
   };
 
   // --- Operaciones ---
+  const handleRestablecerDescansos = () => {
+    const confirmacion = window.confirm(`¿Deseas restablecer la lista oficial de ${INITIAL_DIAS_DESCANSO.length} días de descanso?`);
+    if (!confirmacion) return;
+
+    setDiasDescanso(INITIAL_DIAS_DESCANSO);
+    showNotification(`Lista restablecida a los ${INITIAL_DIAS_DESCANSO.length} descansos oficiales`, "success");
+  };
+
   const handleAgregarDescanso = () => {
     if (!nuevaFechaDescanso) {
       showNotification("Por favor selecciona una fecha", "warning");
@@ -620,75 +646,98 @@ function App() {
 
       {/* Lista de Días de Descanso */}
       <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-        <h2 className="text-lg font-bold flex items-center gap-2 mb-4 border-b pb-3">
-          <i className="fas fa-bed text-purple-600"></i>
-          <span>Días de Descanso ({totalDescansos} días × $400 = {formatearMoneda(valorDescansos)})</span>
-        </h2>
-        {diasDescanso.length === 0 ? (
-          <p className="text-gray-500 italic py-4 text-center">No hay días de descanso registrados.</p>
-        ) : viewMode === 'grid' ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {diasDescanso.map((fechaStr, index) => {
-              const fecha = stringToDate(fechaStr);
-              return (
-                <div
-                  key={index}
-                  className="descanso-item rounded-xl p-3 text-center animate-fade-in relative group transition-all"
-                >
-                  <button
-                    onClick={() => handleEliminarDescanso(fechaStr)}
-                    className="absolute -top-1.5 -right-1.5 bg-rose-500 hover:bg-rose-600 text-white w-5 h-5 rounded-full text-[10px] items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer shadow-md hidden sm:flex"
-                    title="Eliminar descanso"
-                  >
-                    <i className="fas fa-times"></i>
-                  </button>
-                  {/* Para móviles, el botón es visible siempre */}
-                  <button
-                    onClick={() => handleEliminarDescanso(fechaStr)}
-                    className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white w-5 h-5 rounded-full text-[10px] flex items-center justify-center sm:hidden shadow-md cursor-pointer"
-                  >
-                    <i className="fas fa-times"></i>
-                  </button>
-                  <div className="text-xs font-semibold md:text-sm">{formatHumanDate(fecha)}</div>
-                  <div className="text-xs mt-1 font-bold opacity-80">{formatearMoneda(VALOR_DESCANSO)}</div>
-                </div>
-              );
-            })}
+        <div className="flex flex-wrap justify-between items-center gap-3 mb-4 border-b pb-3">
+          <h2 className="text-lg font-bold flex items-center gap-2">
+            <i className="fas fa-bed text-purple-600"></i>
+            <span>Días de Descanso ({totalDescansos} días × $400 = {formatearMoneda(valorDescansos)})</span>
+          </h2>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleRestablecerDescansos}
+              className="text-xs bg-purple-100 hover:bg-purple-200 dark:bg-purple-900/40 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 px-3 py-2 rounded-lg transition-all duration-200 flex items-center gap-1.5 cursor-pointer font-medium"
+              title={`Restablecer a los ${INITIAL_DIAS_DESCANSO.length} descansos oficiales`}
+            >
+              <i className="fas fa-sync-alt"></i>
+              <span>Restablecer ({INITIAL_DIAS_DESCANSO.length})</span>
+            </button>
+            <button
+              onClick={() => setDescansosVisibles(!descansosVisibles)}
+              id="toggle-descansos"
+              className="text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 cursor-pointer text-sm font-medium"
+            >
+              <i className={`fas ${descansosVisibles ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
+              <span>{descansosVisibles ? 'Minimizar' : 'Mostrar'}</span>
+            </button>
           </div>
-        ) : (
-          <div className="overflow-x-auto rounded-xl border border-gray-200/60 dark:border-slate-700/60 shadow-sm">
-            <table className="w-full text-left border-collapse bg-white dark:bg-slate-800">
-              <thead>
-                <tr className="border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">
-                  <th className="py-3 px-4 w-12 text-center">#</th>
-                  <th className="py-3 px-4">Fecha</th>
-                  <th className="py-3 px-4 text-right">Monto</th>
-                  <th className="py-3 px-4 text-center w-24">Acciones</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-150 dark:divide-slate-700/50 text-sm">
-                {diasDescanso.map((fechaStr, index) => {
-                  const fecha = stringToDate(fechaStr);
-                  return (
-                    <tr key={index} className="hover:bg-gray-50/50 dark:hover:bg-slate-700/20 transition-colors">
-                      <td className="py-3 px-4 text-center font-medium text-gray-400">{index + 1}</td>
-                      <td className="py-3 px-4 font-semibold text-gray-800 dark:text-slate-200">{formatHumanDate(fecha)}</td>
-                      <td className="py-3 px-4 text-right font-bold text-purple-600 dark:text-purple-400">{formatearMoneda(VALOR_DESCANSO)}</td>
-                      <td className="py-3 px-4 text-center">
-                        <button
-                          onClick={() => handleEliminarDescanso(fechaStr)}
-                          className="bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 px-2.5 py-1 rounded-md text-xs font-medium cursor-pointer transition-colors inline-flex items-center gap-1"
-                          title="Eliminar descanso"
-                        >
-                          <i className="fas fa-trash-alt"></i> <span>Eliminar</span>
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+        </div>
+
+        {descansosVisibles && (
+          diasDescanso.length === 0 ? (
+            <p className="text-gray-500 italic py-4 text-center">No hay días de descanso registrados.</p>
+          ) : viewMode === 'grid' ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {diasDescanso.map((fechaStr, index) => {
+                const fecha = stringToDate(fechaStr);
+                return (
+                  <div
+                    key={index}
+                    className="descanso-item rounded-xl p-3 text-center animate-fade-in relative group transition-all"
+                  >
+                    <button
+                      onClick={() => handleEliminarDescanso(fechaStr)}
+                      className="absolute -top-1.5 -right-1.5 bg-rose-500 hover:bg-rose-600 text-white w-5 h-5 rounded-full text-[10px] items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer shadow-md hidden sm:flex"
+                      title="Eliminar descanso"
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
+                    {/* Para móviles, el botón es visible siempre */}
+                    <button
+                      onClick={() => handleEliminarDescanso(fechaStr)}
+                      className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white w-5 h-5 rounded-full text-[10px] flex items-center justify-center sm:hidden shadow-md cursor-pointer"
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
+                    <div className="text-xs font-semibold md:text-sm">{formatHumanDate(fecha)}</div>
+                    <div className="text-xs mt-1 font-bold opacity-80">{formatearMoneda(VALOR_DESCANSO)}</div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="overflow-x-auto rounded-xl border border-gray-200/60 dark:border-slate-700/60 shadow-sm">
+              <table className="w-full text-left border-collapse bg-white dark:bg-slate-800">
+                <thead>
+                  <tr className="border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">
+                    <th className="py-3 px-4 w-12 text-center">#</th>
+                    <th className="py-3 px-4">Fecha</th>
+                    <th className="py-3 px-4 text-right">Monto</th>
+                    <th className="py-3 px-4 text-center w-24">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-150 dark:divide-slate-700/50 text-sm">
+                  {diasDescanso.map((fechaStr, index) => {
+                    const fecha = stringToDate(fechaStr);
+                    return (
+                      <tr key={index} className="hover:bg-gray-50/50 dark:hover:bg-slate-700/20 transition-colors">
+                        <td className="py-3 px-4 text-center font-medium text-gray-400">{index + 1}</td>
+                        <td className="py-3 px-4 font-semibold text-gray-800 dark:text-slate-200">{formatHumanDate(fecha)}</td>
+                        <td className="py-3 px-4 text-right font-bold text-purple-600 dark:text-purple-400">{formatearMoneda(VALOR_DESCANSO)}</td>
+                        <td className="py-3 px-4 text-center">
+                          <button
+                            onClick={() => handleEliminarDescanso(fechaStr)}
+                            className="bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 px-2.5 py-1 rounded-md text-xs font-medium cursor-pointer transition-colors inline-flex items-center gap-1"
+                            title="Eliminar descanso"
+                          >
+                            <i className="fas fa-trash-alt"></i> <span>Eliminar</span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )
         )}
       </div>
 
@@ -763,93 +812,106 @@ function App() {
 
       {/* Registro de Abonos */}
       <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-        <h2 className="text-lg font-bold flex items-center gap-2 mb-4 border-b pb-3">
-          <i className="fas fa-money-bill-wave text-emerald-500"></i>
-          <span>Registro de Abonos (Total: {formatearMoneda(sumaAbonos)})</span>
-        </h2>
-        {abonos.length === 0 ? (
-          <p className="text-gray-500 italic py-4 text-center">No hay abonos registrados.</p>
-        ) : viewMode === 'grid' ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {abonos.map((abono, index) => {
-              const fecha = stringToDate(abono.fecha);
-              return (
-                <div
-                  key={index}
-                  className="abono-item rounded-xl p-4 flex justify-between items-center animate-fade-in relative group transition-all"
-                >
-                  <button
-                    onClick={() => handleEliminarAbono(index, abono)}
-                    className="absolute -top-1.5 -right-1.5 bg-rose-500 hover:bg-rose-600 text-white w-5.5 h-5.5 rounded-full text-[10px] items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer shadow-md hidden sm:flex"
-                    title="Eliminar abono"
+        <div className="flex justify-between items-center mb-4 border-b pb-3">
+          <h2 className="text-lg font-bold flex items-center gap-2">
+            <i className="fas fa-money-bill-wave text-emerald-500"></i>
+            <span>Registro de Abonos ({abonos.length} abonos · Total: {formatearMoneda(sumaAbonos)})</span>
+          </h2>
+          <button
+            onClick={() => setAbonosVisibles(!abonosVisibles)}
+            id="toggle-abonos"
+            className="text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 cursor-pointer text-sm font-medium"
+          >
+            <i className={`fas ${abonosVisibles ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
+            <span>{abonosVisibles ? 'Minimizar' : 'Mostrar'}</span>
+          </button>
+        </div>
+
+        {abonosVisibles && (
+          abonos.length === 0 ? (
+            <p className="text-gray-500 italic py-4 text-center">No hay abonos registrados.</p>
+          ) : viewMode === 'grid' ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {abonos.map((abono, index) => {
+                const fecha = stringToDate(abono.fecha);
+                return (
+                  <div
+                    key={index}
+                    className="abono-item rounded-xl p-4 flex justify-between items-center animate-fade-in relative group transition-all"
                   >
-                    <i className="fas fa-times"></i>
-                  </button>
-                  <button
-                    onClick={() => handleEliminarAbono(index, abono)}
-                    className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white w-5.5 h-5.5 rounded-full text-[10px] flex items-center justify-center sm:hidden shadow-md cursor-pointer"
-                  >
-                    <i className="fas fa-times"></i>
-                  </button>
-                  <div className="flex-1 pr-4">
-                    <div className="font-semibold text-xs md:text-sm">{formatHumanDate(fecha)}</div>
-                    {abono.nota && (
-                      <div className="text-xs mt-1.5 italic opacity-85 leading-relaxed bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded border-l-2 border-emerald-400">
-                        {abono.nota}
-                      </div>
-                    )}
+                    <button
+                      onClick={() => handleEliminarAbono(index, abono)}
+                      className="absolute -top-1.5 -right-1.5 bg-rose-500 hover:bg-rose-600 text-white w-5.5 h-5.5 rounded-full text-[10px] items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer shadow-md hidden sm:flex"
+                      title="Eliminar abono"
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
+                    <button
+                      onClick={() => handleEliminarAbono(index, abono)}
+                      className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white w-5.5 h-5.5 rounded-full text-[10px] flex items-center justify-center sm:hidden shadow-md cursor-pointer"
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
+                    <div className="flex-1 pr-4">
+                      <div className="font-semibold text-xs md:text-sm">{formatHumanDate(fecha)}</div>
+                      {abono.nota && (
+                        <div className="text-xs mt-1.5 italic opacity-85 leading-relaxed bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded border-l-2 border-emerald-400">
+                          {abono.nota}
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-base md:text-lg font-bold whitespace-nowrap">
+                      {formatearMoneda(abono.monto)}
+                    </div>
                   </div>
-                  <div className="text-base md:text-lg font-bold whitespace-nowrap">
-                    {formatearMoneda(abono.monto)}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="overflow-x-auto rounded-xl border border-gray-200/60 dark:border-slate-700/60 shadow-sm">
-            <table className="w-full text-left border-collapse bg-white dark:bg-slate-800">
-              <thead>
-                <tr className="border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">
-                  <th className="py-3 px-4 w-12 text-center">#</th>
-                  <th className="py-3 px-4">Fecha</th>
-                  <th className="py-3 px-4">Nota / Concepto</th>
-                  <th className="py-3 px-4 text-right">Monto</th>
-                  <th className="py-3 px-4 text-center w-24">Acciones</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-150 dark:divide-slate-700/50 text-sm">
-                {abonos.map((abono, index) => {
-                  const fecha = stringToDate(abono.fecha);
-                  return (
-                    <tr key={index} className="hover:bg-gray-50/50 dark:hover:bg-slate-700/20 transition-colors">
-                      <td className="py-3 px-4 text-center font-medium text-gray-400">{index + 1}</td>
-                      <td className="py-3 px-4 font-semibold text-gray-800 dark:text-slate-200">{formatHumanDate(fecha)}</td>
-                      <td className="py-3 px-4">
-                        {abono.nota ? (
-                          <span className="italic text-gray-600 dark:text-slate-300 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded border-l-2 border-emerald-400 block text-xs leading-relaxed max-w-md">
-                            {abono.nota}
-                          </span>
-                        ) : (
-                          <span className="text-gray-400 italic text-xs">Sin nota</span>
-                        )}
-                      </td>
-                      <td className="py-3 px-4 text-right font-bold text-emerald-600 dark:text-emerald-400">{formatearMoneda(abono.monto)}</td>
-                      <td className="py-3 px-4 text-center">
-                        <button
-                          onClick={() => handleEliminarAbono(index, abono)}
-                          className="bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 px-2.5 py-1 rounded-md text-xs font-medium cursor-pointer transition-colors inline-flex items-center gap-1"
-                          title="Eliminar abono"
-                        >
-                          <i className="fas fa-trash-alt"></i> <span>Eliminar</span>
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="overflow-x-auto rounded-xl border border-gray-200/60 dark:border-slate-700/60 shadow-sm">
+              <table className="w-full text-left border-collapse bg-white dark:bg-slate-800">
+                <thead>
+                  <tr className="border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">
+                    <th className="py-3 px-4 w-12 text-center">#</th>
+                    <th className="py-3 px-4">Fecha</th>
+                    <th className="py-3 px-4">Nota / Concepto</th>
+                    <th className="py-3 px-4 text-right">Monto</th>
+                    <th className="py-3 px-4 text-center w-24">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-150 dark:divide-slate-700/50 text-sm">
+                  {abonos.map((abono, index) => {
+                    const fecha = stringToDate(abono.fecha);
+                    return (
+                      <tr key={index} className="hover:bg-gray-50/50 dark:hover:bg-slate-700/20 transition-colors">
+                        <td className="py-3 px-4 text-center font-medium text-gray-400">{index + 1}</td>
+                        <td className="py-3 px-4 font-semibold text-gray-800 dark:text-slate-200">{formatHumanDate(fecha)}</td>
+                        <td className="py-3 px-4">
+                          {abono.nota ? (
+                            <span className="italic text-gray-600 dark:text-slate-300 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded border-l-2 border-emerald-400 block text-xs leading-relaxed max-w-md">
+                              {abono.nota}
+                            </span>
+                          ) : (
+                            <span className="text-gray-400 italic text-xs">Sin nota</span>
+                          )}
+                        </td>
+                        <td className="py-3 px-4 text-right font-bold text-emerald-600 dark:text-emerald-400">{formatearMoneda(abono.monto)}</td>
+                        <td className="py-3 px-4 text-center">
+                          <button
+                            onClick={() => handleEliminarAbono(index, abono)}
+                            className="bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 px-2.5 py-1 rounded-md text-xs font-medium cursor-pointer transition-colors inline-flex items-center gap-1"
+                            title="Eliminar abono"
+                          >
+                            <i className="fas fa-trash-alt"></i> <span>Eliminar</span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )
         )}
       </div>
     </div>
