@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 const FECHA_INICIO = new Date("2025-03-17");
 const FECHA_FIN_PRIMER_PERIODO = new Date("2026-02-20");
 const FECHA_INICIO_SEGUNDO_PERIODO = new Date("2026-06-29");
+const FECHA_FIN_SEGUNDO_PERIODO = new Date("2026-09-02");
 const VALOR_DESCANSO = 400;
 const VALOR_DIA = 200;
 const VALOR_VACACIONES = 600;
@@ -15,7 +16,83 @@ const MESES = [
 
 // Datos iniciales en caso de no existir en localStorage
 const INITIAL_DIAS_DESCANSO = [
-"20-Marzo-2025", "21-Marzo-2025", "23-Marzo-2025", "24-Marzo-2025", "25-Marzo-2025", "06-Abril-2025", "13-Abril-2025", "21-Abril-2025", "22-Abril-2025", "23-Abril-2025", "27-Abril-2025", "01-Mayo-2025", "14-Mayo-2025", "23-Mayo-2025", "01-Junio-2025", "08-Junio-2025", "15-Junio-2025", "22-Junio-2025", "29-Junio-2025", "05-Julio-2025", "06-Julio-2025", "13-Julio-2025", "19-Julio-2025", "20-Julio-2025", "27-Julio-2025", "03-Agosto-2025", "10-Agosto-2025", "16-Agosto-2025", "17-Agosto-2025", "18-Agosto-2025", "24-Agosto-2025", "07-Septiembre-2025", "14-Septiembre-2025", "21-Septiembre-2025", "28-Septiembre-2025", "05-Octubre-2025", "12-Octubre-2025", "17-Octubre-2025", "27-Octubre-2025", "07-Noviembre-2025", "23-Noviembre-2025", "26-Noviembre-2025", "07-Diciembre-2025", "14-Diciembre-2025", "21-Diciembre-2025", "23-Diciembre-2025", "24-Diciembre-2025", "25-Diciembre-2025", "26-Diciembre-2025", "27-Diciembre-2025", "28-Diciembre-2025", "29-Diciembre-2025", "30-Diciembre-2025", "31-Diciembre-2025", "01-Enero-2026", "02-Enero-2026", "03-Enero-2026", "04-Enero-2026", "05-Enero-2026", "06-Enero-2026", "18-Enero-2026", "25-Enero-2026", "01-Febrero-2026", "08-Febrero-2026", "15-Febrero-2026", "12-Marzo-2026", "23-Marzo-2026", "05-Julio-2026", "12-Julio-2026", "16-Julio-2026", "17-Julio-2026", "26-Julio-2026", "02-Agosto-2026", "09-Agosto-2026", "16-Agosto-2026", "23-Agosto-2026", "06-Septiembre-2026", "13-Septiembre-2026"
+"20-Marzo-2025",
+"21-Marzo-2025",
+"23-Marzo-2025",
+"24-Marzo-2025",
+"25-Marzo-2025",
+"06-Abril-2025",
+"13-Abril-2025",
+"21-Abril-2025",
+"22-Abril-2025",
+"23-Abril-2025",
+"27-Abril-2025",
+"01-Mayo-2025",
+"14-Mayo-2025",
+"23-Mayo-2025",
+"01-Junio-2025",
+"08-Junio-2025",
+"15-Junio-2025",
+"22-Junio-2025",
+"29-Junio-2025",
+"05-Julio-2025",
+"06-Julio-2025",
+"13-Julio-2025",
+"19-Julio-2025",
+"20-Julio-2025",
+"27-Julio-2025",
+"03-Agosto-2025",
+"10-Agosto-2025",
+"16-Agosto-2025",
+"17-Agosto-2025",
+"18-Agosto-2025",
+"24-Agosto-2025",
+"07-Septiembre-2025",
+"14-Septiembre-2025",
+"21-Septiembre-2025",
+"28-Septiembre-2025",
+"05-Octubre-2025",
+"12-Octubre-2025",
+"17-Octubre-2025",
+"27-Octubre-2025",
+"07-Noviembre-2025",
+"23-Noviembre-2025",
+"26-Noviembre-2025",
+"07-Diciembre-2025",
+"14-Diciembre-2025",
+"21-Diciembre-2025",
+"23-Diciembre-2025",
+"24-Diciembre-2025",
+"25-Diciembre-2025",
+"26-Diciembre-2025",
+"27-Diciembre-2025",
+"28-Diciembre-2025",
+"29-Diciembre-2025",
+"30-Diciembre-2025",
+"31-Diciembre-2025",
+"01-Enero-2026",
+"02-Enero-2026",
+"03-Enero-2026",
+"04-Enero-2026",
+"05-Enero-2026",
+"06-Enero-2026",
+"18-Enero-2026",
+"25-Enero-2026",
+"01-Febrero-2026",
+"08-Febrero-2026",
+"15-Febrero-2026",
+"23-Marzo-2026",
+"05-Julio-2026",
+"12-Julio-2026",
+"16-Julio-2026",
+"17-Julio-2026",
+"26-Julio-2026",
+"02-Agosto-2026",
+"09-Agosto-2026",
+"16-Agosto-2026",
+"23-Agosto-2026",
+"06-Septiembre-2026",
+"13-Septiembre-2026"
 ];
 
 const INITIAL_DIAS_VACACIONES = [
@@ -57,6 +134,8 @@ const INITIAL_ABONOS = [
 {fecha: "21-Julio-2026", monto: 1000, nota: "Dia que nina andaba amanecida"},
 {fecha: "09-Agosto-2026", monto: 3000, nota: "Dia que se fue la luz en la cuadra"},
 {fecha: "01-Septiembre-2026", monto: 1500, nota: "Para pagar colegiatura"},
+{fecha: "15-Septiembre-2026", monto: 1000, nota: "terminar de pagar colegiatura"},
+
 ];
 
 // Helper functions para el formateo y conversión de fechas
@@ -247,9 +326,11 @@ function App() {
 
   const hoy = new Date();
   const diasPrimerPeriodo = calcularDiasEntreFechas(FECHA_INICIO, FECHA_FIN_PRIMER_PERIODO);
-  const diasSegundoPeriodo = hoy >= FECHA_INICIO_SEGUNDO_PERIODO
-    ? calcularDiasEntreFechas(FECHA_INICIO_SEGUNDO_PERIODO, hoy)
-    : 0;
+  const diasSegundoPeriodo = hoy >= FECHA_FIN_SEGUNDO_PERIODO
+    ? calcularDiasEntreFechas(FECHA_INICIO_SEGUNDO_PERIODO, FECHA_FIN_SEGUNDO_PERIODO)
+    : hoy >= FECHA_INICIO_SEGUNDO_PERIODO
+      ? calcularDiasEntreFechas(FECHA_INICIO_SEGUNDO_PERIODO, hoy)
+      : 0;
   const diasTranscurridos = diasPrimerPeriodo + diasSegundoPeriodo;
 
   const totalDescansos = diasDescanso.length;
@@ -261,7 +342,7 @@ function App() {
   const sumaAbonos = abonos.reduce((suma, abono) => suma + abono.monto, 0);
   const ingresosPorDias = diasTranscurridos * VALOR_DIA;
 
-  const diasTrabajados = Math.max(0, diasTranscurridos - totalDescansos);
+  const diasTrabajados = diasTranscurridos;
 
   const totalGeneral = valorDescansos + (vacacionesVisibles ? valorVacaciones : 0) + ingresosPorDias - sumaAbonos;
 
@@ -412,6 +493,10 @@ function App() {
             <div className="flex justify-between items-center text-sm md:text-base">
               <span className="text-gray-600">Segundo período inicio:</span>
               <span className="font-semibold text-emerald-600">29 de junio, 2026</span>
+            </div>
+            <div className="flex justify-between items-center text-sm md:text-base">
+              <span className="text-gray-600">Segundo período final:</span>
+              <span className="font-semibold text-emerald-600">2 de septiembre, 2026</span>
             </div>
             <div className="flex justify-between items-center text-sm md:text-base">
               <span className="text-gray-600">Fecha Actual:</span>
